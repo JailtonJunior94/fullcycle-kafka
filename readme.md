@@ -31,4 +31,5 @@
 
 4. Consumer Groups
    ```
+   kafka-consumer-groups --bootstrap-server=localhost:9092 --group=x --describe
    ```
