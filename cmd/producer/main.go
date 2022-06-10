@@ -1,22 +1,30 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 func main() {
+	deliveryChan := make(chan kafka.Event)
+
 	producer := NewKafkaProducer()
-	if err := Publish("mensagem via GO", "teste", producer, nil); err != nil {
+	if err := Publish("Mensagem via GO", "teste", producer, nil, deliveryChan); err != nil {
 		log.Println(err.Error())
 	}
-	producer.Flush(1000)
+
+	go DeliveryReport(deliveryChan)
+	producer.Flush(2000)
 }
 
 func NewKafkaProducer() *kafka.Producer {
 	configMap := &kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
+		"bootstrap.servers":   "localhost:9093",
+		"delivery.timeout.ms": "0",
+		"acks":                "1",
+		"enable.idempotence":  "false",
 	}
 
 	producer, err := kafka.NewProducer(configMap)
@@ -26,7 +34,7 @@ func NewKafkaProducer() *kafka.Producer {
 	return producer
 }
 
-func Publish(message, topic string, producer *kafka.Producer, key []byte) error {
+func Publish(message, topic string, producer *kafka.Producer, key []byte, deliveryChan chan kafka.Event) error {
 	msg := &kafka.Message{
 		Value: []byte(message),
 		TopicPartition: kafka.TopicPartition{
@@ -36,8 +44,22 @@ func Publish(message, topic string, producer *kafka.Producer, key []byte) error 
 		Key: key,
 	}
 
-	if err := producer.Produce(msg, nil); err != nil {
+	if err := producer.Produce(msg, deliveryChan); err != nil {
 		return err
 	}
 	return nil
+}
+
+func DeliveryReport(deliveryChan chan kafka.Event) {
+	for e := range deliveryChan {
+		switch ev := e.(type) {
+		case *kafka.Message:
+			if ev.TopicPartition.Error != nil {
+				fmt.Println("erro ao enviar mensagem")
+				return
+			}
+			fmt.Println("mensagem enviada: ", ev.TopicPartition)
+			return
+		}
+	}
 }
