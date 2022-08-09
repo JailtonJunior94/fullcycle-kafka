@@ -28,6 +28,7 @@ func CreateCustomer(w http.ResponseWriter, r *http.Request) {
 			"Success": false,
 			"Message": fmt.Sprintf("Ocorreu um erro ao tentar inserir: %v", err),
 		}
+		return
 	}
 
 	res = map[string]any{

@@ -7,8 +7,8 @@ import (
 var cfg *config
 
 type config struct {
-	API *APIConfig
-	DB  *DBConfig
+	API APIConfig
+	DB  DBConfig
 }
 
 type APIConfig struct {
@@ -27,6 +27,9 @@ func init() {
 	viper.SetDefault("api.port", "9000")
 	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.port", "1433")
+	viper.SetDefault("database.user", "sa")
+	viper.SetDefault("database.password", "@docker@2021")
+	viper.SetDefault("database.name", "CDC_POC")
 }
 
 func Load() error {
@@ -42,11 +45,11 @@ func Load() error {
 	}
 
 	cfg := new(config)
-	cfg.API = &APIConfig{
+	cfg.API = APIConfig{
 		Port: viper.GetString("api.port"),
 	}
 
-	cfg.DB = &DBConfig{
+	cfg.DB = DBConfig{
 		Host:     viper.GetString("database.host"),
 		Port:     viper.GetString("database.port"),
 		User:     viper.GetString("database.user"),
@@ -58,7 +61,7 @@ func Load() error {
 }
 
 func GetDB() DBConfig {
-	return *cfg.DB
+	return cfg.DB
 }
 
 func GetServerPort() string {

@@ -6,19 +6,15 @@ import (
 	"net/url"
 
 	_ "github.com/denisenkom/go-mssqldb"
-
-	"github.com/jailtonjunior94/fullcycle-kafka/cmd/api/configs"
 )
 
 func OpenConnection() (*sql.DB, error) {
-	conf := configs.GetDB()
-
 	query := url.Values{}
-	query.Add("database", conf.Database)
+	query.Add("database", "CDC_POC")
 	u := &url.URL{
 		Scheme:   "sqlserver",
-		User:     url.UserPassword(conf.User, conf.Password),
-		Host:     fmt.Sprintf("%s:%s", conf.Host, conf.Port),
+		User:     url.UserPassword("sa", "@docker@2021"),
+		Host:     fmt.Sprintf("%s:%s", "localhost", "1433"),
 		RawQuery: query.Encode(),
 	}
 
