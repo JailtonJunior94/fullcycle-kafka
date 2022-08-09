@@ -19,5 +19,14 @@
             "env": {},
             "args": []
         },
+        {
+            "name": "[Debug] API",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/api/main.go",
+            "env": {},
+            "args": []
+        },
     ]
 }

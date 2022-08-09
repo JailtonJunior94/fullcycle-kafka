@@ -1,0 +1,9 @@
+[api]
+port = "9000"
+
+[database]
+host = "localhost"
+port = "1433"
+user = "sa"
+password = "@docker@2021"
+name = "CDC_POC"

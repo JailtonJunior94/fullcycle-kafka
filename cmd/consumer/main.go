@@ -8,7 +8,7 @@ import (
 
 func main() {
 	configMap := &kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9093",
+		"bootstrap.servers": "20.81.109.231:9094",
 		"client.id":         "goapp0-consumer",
 		"group.id":          "goapp0-group",
 		"auto.offset.reset": "earliest",
@@ -19,7 +19,7 @@ func main() {
 		fmt.Println("Erro consumer", err.Error())
 	}
 
-	topics := []string{"teste"}
+	topics := []string{"cdc_transactions.dbo.Transaction"}
 	consumer.SubscribeTopics(topics, nil)
 	for {
 		msg, err := consumer.ReadMessage(-1)
